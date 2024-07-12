@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional, List
+import re
 
-SEPARATOR_TOKEN = "<|endoftext|>"
+SEPARATOR_TOKEN = ""
 
 
 @dataclass(frozen=True)
@@ -75,10 +76,11 @@ class Prompt:
 
     def render_messages(self, bot_name):
         for message in self.convo.messages:
+            valid_name = re.sub(r'[^a-zA-Z0-9_-]', '_', message.user)  # Replace invalid characters with underscore
             if not bot_name in message.user:
                 yield {
                     "role": "user",
-                    "name": message.user,
+                    "name": valid_name,
                     "content": message.text,
                 }
             else:
